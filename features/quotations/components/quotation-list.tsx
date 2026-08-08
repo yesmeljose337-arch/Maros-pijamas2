@@ -9,6 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ContentCard } from "@/components/shared/content-card";
+import { PageHeader } from "@/components/shared/page-header";
 import { getQuotations } from "../services/quotations.service";
 import { getClients } from "@/features/clients/services/clients.service";
 import { QuotationTable } from "./quotation-table";
@@ -47,31 +49,34 @@ export function QuotationList() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-heading text-3xl text-foreground">Cotizaciones</h1>
-          <p className="text-muted-foreground mt-1">Solicitudes recibidas desde el sitio público</p>
-        </div>
-        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as QuotationStatus | "todos")}>
-          <SelectTrigger className="w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos los estados</SelectItem>
-            {QUOTATION_STATUSES.map((s) => (
-              <SelectItem key={s.value} value={s.value}>
-                {s.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <PageHeader title="Cotizaciones" subtitle="Solicitudes recibidas desde el sitio público" />
 
-      {loading ? (
-        <Skeleton className="h-96 w-full rounded-lg" />
-      ) : (
-        <QuotationTable quotations={filtered} clientCities={clientCities} onRowClick={setSelected} />
-      )}
+      <ContentCard
+        noPadding
+        toolbar={
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as QuotationStatus | "todos")}>
+            <SelectTrigger className="w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos los estados</SelectItem>
+              {QUOTATION_STATUSES.map((s) => (
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        }
+      >
+        {loading ? (
+          <div className="p-5">
+            <Skeleton className="h-72 w-full rounded-lg" />
+          </div>
+        ) : (
+          <QuotationTable quotations={filtered} clientCities={clientCities} onRowClick={setSelected} />
+        )}
+      </ContentCard>
 
       <QuotationDetailPanel
         quotation={selected}

@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { ContentCard } from "@/components/shared/content-card";
+import { PageHeader } from "@/components/shared/page-header";
 import { toast } from "@/lib/toast";
 import { UserTable } from "./user-table";
 import { InviteUserDialog } from "./invite-user-dialog";
-import { RolesPermissionsPanel } from "./roles-permissions-panel";
 import { EditUserDialog } from "./edit-user-dialog";
+import { RolesPermissionsPanel } from "./roles-permissions-panel";
 import {
   getUsers,
   inviteUser,
@@ -21,15 +23,14 @@ import {
 } from "../services/users.service";
 import type { AdminUser, PermissionMatrix, UserRole } from "../types";
 
-// Mock del usuario autenticado actual — se reemplaza cuando exista sesión real.
 const CURRENT_USER_ID = "u1";
 
 export function UsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [editTarget, setEditTarget] = useState<AdminUser | null>(null);
   const [matrix, setMatrix] = useState<PermissionMatrix | null>(null);
   const [loading, setLoading] = useState(true);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<AdminUser | null>(null);
   const [removeTarget, setRemoveTarget] = useState<AdminUser | null>(null);
   const [savingMatrix, setSavingMatrix] = useState(false);
 
@@ -58,10 +59,10 @@ export function UsersPage() {
   }
 
   async function handleEditSave(id: string, data: { name: string; email: string }) {
-  await updateUser(id, data);
-  toast.success("Usuario actualizado");
-  fetchAll();
-}
+    await updateUser(id, data);
+    toast.success("Usuario actualizado");
+    fetchAll();
+  }
 
   async function confirmRemove() {
     if (!removeTarget) return;
@@ -83,16 +84,16 @@ export function UsersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-heading text-3xl text-foreground">Usuarios</h1>
-          <p className="text-muted-foreground mt-1">Gestiona los usuarios y roles del sistema</p>
-        </div>
-        <Button onClick={() => setInviteOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Invitar usuario
-        </Button>
-      </div>
+      <PageHeader
+        title="Usuarios"
+        subtitle="Gestiona los usuarios y roles del sistema"
+        action={
+          <Button onClick={() => setInviteOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Invitar usuario
+          </Button>
+        }
+      />
 
       <Tabs defaultValue="usuarios">
         <TabsList>
@@ -101,33 +102,36 @@ export function UsersPage() {
         </TabsList>
 
         <TabsContent value="usuarios" className="pt-4">
-<UserTable
-  users={users}
-  currentUserId={CURRENT_USER_ID}
-  onRoleChange={handleRoleChange}
-  onEdit={setEditTarget}
-  onRemove={setRemoveTarget}
-/>
+          <ContentCard noPadding>
+            <UserTable
+              users={users}
+              currentUserId={CURRENT_USER_ID}
+              onRoleChange={handleRoleChange}
+              onEdit={setEditTarget}
+              onRemove={setRemoveTarget}
+            />
+          </ContentCard>
         </TabsContent>
 
         <TabsContent value="roles" className="pt-4 flex flex-col gap-4">
-          <RolesPermissionsPanel matrix={matrix} onChange={setMatrix} />
-          <div className="flex justify-end">
-            <Button onClick={handleSaveMatrix} disabled={savingMatrix}>
-              {savingMatrix ? "Guardando..." : "Guardar permisos"}
-            </Button>
-          </div>
+          <ContentCard>
+            <RolesPermissionsPanel matrix={matrix} onChange={setMatrix} />
+            <div className="flex justify-end mt-4">
+              <Button onClick={handleSaveMatrix} disabled={savingMatrix}>
+                {savingMatrix ? "Guardando..." : "Guardar permisos"}
+              </Button>
+            </div>
+          </ContentCard>
         </TabsContent>
       </Tabs>
 
-      <EditUserDialog
-  open={!!editTarget}
-  onOpenChange={(open) => !open && setEditTarget(null)}
-  user={editTarget}
-  onSave={handleEditSave}
-/>
-
       <InviteUserDialog open={inviteOpen} onOpenChange={setInviteOpen} onInvite={handleInvite} />
+      <EditUserDialog
+        open={!!editTarget}
+        onOpenChange={(open) => !open && setEditTarget(null)}
+        user={editTarget}
+        onSave={handleEditSave}
+      />
       <ConfirmDialog
         open={!!removeTarget}
         onOpenChange={(open) => !open && setRemoveTarget(null)}

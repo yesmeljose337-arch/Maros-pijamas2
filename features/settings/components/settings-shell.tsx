@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/shared/page-header";
 import { toast } from "@/lib/toast";
 import { getSiteSettings, updateSiteSettings } from "../services/settings.service";
 import { SettingsNav } from "./settings-nav";
@@ -34,14 +35,16 @@ export function SettingsShell() {
     toast.success("Configuración guardada");
   }
 
+  function handleCancel() {
+    getSiteSettings().then(setSettings);
+    toast.info("Cambios descartados");
+  }
+
   if (!settings) return <Skeleton className="h-96 w-full rounded-lg" />;
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-heading text-3xl text-foreground">Configuración</h1>
-        <p className="text-muted-foreground mt-1">Ajustes generales del sitio</p>
-      </div>
+      <PageHeader title="Configuración" subtitle="Ajustes generales del sitio" />
 
       <div className="flex flex-col lg:flex-row gap-6">
         <SettingsNav active={active} onChange={setActive} />
@@ -76,7 +79,7 @@ export function SettingsShell() {
           )}
 
           <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-border">
-            <Button variant="outline" onClick={() => getSiteSettings().then(setSettings)}>Cancelar</Button>
+            <Button variant="outline" onClick={handleCancel}>Cancelar</Button>
             <Button onClick={handleSave} disabled={saving}>{saving ? "Guardando..." : "Guardar cambios"}</Button>
           </div>
         </div>

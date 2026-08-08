@@ -6,6 +6,8 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { ContentCard } from "@/components/shared/content-card";
+import { PageHeader } from "@/components/shared/page-header";
 import { toast } from "@/lib/toast";
 import { getProducts, deleteProduct } from "../services/products.service";
 import { ProductSearch } from "./product-search";
@@ -47,47 +49,54 @@ export function ProductList() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-heading text-3xl text-foreground">Productos</h1>
-          <p className="text-muted-foreground mt-1">Gestiona el catálogo de Maro&apos;s Pijamas</p>
-        </div>
-        <Button asChild>
-          <Link href="/admin/productos/nuevo">
-            <Plus className="h-4 w-4 mr-2" />
-            Nuevo producto
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title="Productos"
+        subtitle="Gestiona el catálogo de Maro's Pijamas"
+        action={
+          <Button asChild>
+            <Link href="/admin/productos/nuevo">
+              <Plus className="h-4 w-4 mr-2" />
+              Nuevo producto
+            </Link>
+          </Button>
+        }
+      />
 
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3 flex-wrap">
-          <ProductSearch value={search} onChange={setSearch} />
-          <ProductFilters
-            category={category}
-            status={status}
-            onCategoryChange={setCategory}
-            onStatusChange={setStatus}
-          />
-        </div>
-        <ViewToggle value={view} onChange={setView} />
-      </div>
-
-      {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-64 rounded-lg" />
-          ))}
-        </div>
-      ) : products.length === 0 ? (
-        <p className="text-muted-foreground text-center py-12">
-          No se encontraron productos con esos filtros.
-        </p>
-      ) : view === "grid" ? (
-        <ProductGrid products={products} onQuickView={setQuickViewProduct} onDelete={setDeleteTarget} />
-      ) : (
-        <ProductTable products={products} onQuickView={setQuickViewProduct} onDelete={setDeleteTarget} />
-      )}
+      <ContentCard
+        noPadding
+        toolbar={
+          <>
+            <div className="flex items-center gap-3 flex-wrap">
+              <ProductSearch value={search} onChange={setSearch} />
+              <ProductFilters
+                category={category}
+                status={status}
+                onCategoryChange={setCategory}
+                onStatusChange={setStatus}
+              />
+            </div>
+            <ViewToggle value={view} onChange={setView} />
+          </>
+        }
+      >
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="h-64 rounded-lg" />
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <p className="text-muted-foreground text-center py-12">
+            No se encontraron productos con esos filtros.
+          </p>
+        ) : view === "grid" ? (
+          <div className="p-5">
+            <ProductGrid products={products} onQuickView={setQuickViewProduct} onDelete={setDeleteTarget} />
+          </div>
+        ) : (
+          <ProductTable products={products} onQuickView={setQuickViewProduct} onDelete={setDeleteTarget} />
+        )}
+      </ContentCard>
 
       <ProductQuickView
         product={quickViewProduct}
