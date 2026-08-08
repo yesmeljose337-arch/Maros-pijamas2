@@ -19,6 +19,7 @@ export interface TopProduct {
   id: string;
   name: string;
   sales: number;
+  views: number;
   emoji: string;
 }
 
@@ -43,11 +44,14 @@ export interface DashboardData {
   stats: DashboardStat[];
   salesVsQuotations: SalesVsQuotationsPoint[];
   conversionRate: number;
+  monthlySales: { amount: string; changePercent: string };
   topProducts: TopProduct[];
   recentQuotations: RecentQuotation[];
   activeSeason: {
     name: string;
     collection: string;
-    daysRemaining: number;
+    collectionId: string;
+    startDate: string;
+    endDate: string;
   };
 }

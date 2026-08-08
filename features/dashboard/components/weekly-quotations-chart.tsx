@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  Legend,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SalesVsQuotationsPoint } from "../types";
@@ -16,19 +15,27 @@ import type { SalesVsQuotationsPoint } from "../types";
 export function WeeklyQuotationsChart({ data }: { data: SalesVsQuotationsPoint[] }) {
   return (
     <Card className="col-span-2">
-      <CardHeader>
-        <CardTitle className="text-base font-medium">Ventas vs Cotizaciones — últimos 7 días</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-base font-medium">Ventas vs Cotizaciones</CardTitle>
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-primary" /> Ventas
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-accent" /> Cotizaciones
+          </span>
+        </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={260}>
+        <ResponsiveContainer width="100%" height={240}>
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.35} />
+                <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorCotizaciones" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.35} />
+                <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3} />
                 <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
               </linearGradient>
             </defs>
@@ -43,7 +50,6 @@ export function WeeklyQuotationsChart({ data }: { data: SalesVsQuotationsPoint[]
                 fontSize: "0.85rem",
               }}
             />
-            <Legend wrapperStyle={{ fontSize: "0.8rem" }} />
             <Area type="monotone" dataKey="ventas" name="Ventas" stroke="var(--primary)" fill="url(#colorVentas)" strokeWidth={2} />
             <Area type="monotone" dataKey="cotizaciones" name="Cotizaciones" stroke="var(--accent)" fill="url(#colorCotizaciones)" strokeWidth={2} />
           </AreaChart>
